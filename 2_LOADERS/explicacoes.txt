@@ -1,0 +1,248 @@
+Perfeito — aqui tem **um erro claro + um fluxo completo de como configurar loaders corretamente**.
+
+---
+
+# 🚨 ❌ CAUSA DO ERRO (RAIZ)
+
+O problema está aqui:
+
+```js
+test: /\.CSS$/,
+```
+
+👉 Isso está errado por causa do **case sensitive**
+
+---
+
+## 💥 O correto é:
+
+```js
+test: /\.css$/,
+```
+
+👉 minúsculo
+
+---
+
+# 🧠 POR QUE ISSO QUEBROU
+
+Webpack usa regex:
+
+```js
+/\.CSS$/
+```
+
+👉 Ele procura arquivos **.CSS (maiúsculo)**
+
+Mas seu arquivo é:
+
+```bash
+title.css
+```
+
+👉 Resultado:
+❌ loader não aplicado
+❌ Webpack tenta ler CSS como JS
+❌ erro: *Unexpected token*
+
+---
+
+# ✅ CORREÇÃO
+
+```js
+{
+  test: /\.css$/,
+  use: [
+    'style-loader',
+    'css-loader'
+  ]
+}
+```
+
+---
+
+# 🧠 AGORA O TUTORIAL (PRONTO PRA PDF)
+
+---
+
+# ⚙️ Como adicionar um loader no Webpack (exemplo: CSS)
+
+---
+
+## 🎯 Objetivo
+
+Permitir importar CSS dentro do JavaScript:
+
+```js
+import './style.css'
+```
+
+---
+
+## 🧩 PASSO 1 — Instalar dependências
+
+```bash
+npm i -D css-loader style-loader
+```
+
+### 🧠 O que cada um faz
+
+* `css-loader` → interpreta o CSS
+* `style-loader` → injeta CSS no DOM
+
+---
+
+## 🧩 PASSO 2 — Configurar o Webpack
+
+No `webpack.config.js`:
+
+```js
+module: {
+  rules: [
+    {
+      test: /\.css$/,
+      use: [
+        'style-loader',
+        'css-loader'
+      ]
+    }
+  ]
+}
+```
+
+---
+
+## 🧠 Explicação de cada parte
+
+### 🔹 `module.rules`
+
+Lista de regras para tratar arquivos
+
+---
+
+### 🔹 `test: /\.css$/`
+
+Define quais arquivos serão processados
+
+👉 nesse caso:
+
+* todos `.css`
+
+---
+
+### 🔹 `use`
+
+Define quais loaders serão usados
+
+👉 Ordem IMPORTANTE:
+
+```bash
+css-loader → style-loader
+```
+
+Mas no código:
+
+```js
+use: ['style-loader', 'css-loader']
+```
+
+👉 executa de baixo pra cima
+
+---
+
+## 🧩 PASSO 3 — Usar no código
+
+```js
+import './style.css'
+```
+
+---
+
+## 🧠 O que acontece internamente
+
+```bash
+CSS → css-loader → transforma em JS
+→ style-loader → injeta no DOM
+→ aparece na tela
+```
+
+---
+
+## 🧩 PASSO 4 — Rodar build
+
+```bash
+npm run build
+```
+
+---
+
+# 🚨 ERROS COMUNS
+
+## ❌ Regex errado
+
+```js
+/\.CSS$/ ❌
+```
+
+✔️ correto:
+
+```js
+/\.css$/ ✔️
+```
+
+---
+
+## ❌ Loader não instalado
+
+Erro:
+
+```bash
+You may need an appropriate loader
+```
+
+---
+
+## ❌ Ordem errada
+
+```js
+['css-loader', 'style-loader'] ❌
+```
+
+---
+
+# 🎯 QUANDO USAR
+
+* quando importar CSS no JS
+* quando usar React
+* quando usar SCSS/CSS Modules
+
+---
+
+# 🚫 QUANDO NÃO USAR
+
+* HTML simples sem bundler
+* projetos sem build
+
+---
+
+# 📌 RESUMO BRUTAL
+
+* loader transforma arquivos
+* css-loader lê CSS
+* style-loader injeta no DOM
+* regex precisa estar correto
+* ordem dos loaders importa
+
+---
+
+# 💥 VISÃO DE ENGENHEIRO
+
+👉 Webpack não entende CSS
+👉 loader ensina ele a entender
+
+---
+
+Se quiser, posso te mostrar agora:
+
+👉 como separar CSS em arquivo real (produção)
+👉 isso é exatamente o que empresa usa (MiniCssExtractPlugin)
