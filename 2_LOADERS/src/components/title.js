@@ -1,3 +1,5 @@
+import './title.css';
+
 class Title { 
     // Define uma classe chamada Title
 
